@@ -1,0 +1,230 @@
+name: FlowPebble Android Release & Play Store CI/CD
+ 
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      generate_new_keystore:
+        description: 'Generate a brand-new upload keystore (.jks + Base64) in workflow artifacts if you do not have one yet'
+        required: false
+        default: false
+        type: boolean
+ 
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+ 
+concurrency:
+  group: "flowpebble-ci-${{ github.ref }}"
+  cancel-in-progress: false
+ 
+jobs:
+  generate-keystore:
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.generate_new_keystore == true }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+ 
+      - name: Generate Upload Keystore & Base64 Bundle
+        shell: bash
+        env:
+          KEY_ALIAS_IN: ${{ secrets.KEY_ALIAS }}
+          KEY_PASS_IN: ${{ secrets.KEY_PASSWORD }}
+          STORE_PASS_IN: ${{ secrets.STORE_PASSWORD }}
+        run: |
+          set -euo pipefail
+          ALIAS="${KEY_ALIAS_IN:-flowpebble-key}"
+          KPASS="${KEY_PASS_IN:-FlowPebbleStrongPass2026!}"
+          SPASS="${STORE_PASS_IN:-FlowPebbleStrongPass2026!}"
+          mkdir -p keystore-bundle
+          keytool -genkeypair -v \
+            -keystore keystore-bundle/flowpebble-upload.jks \
+            -keyalg RSA -keysize 2048 -validity 10000 \
+            -alias "$ALIAS" \
+            -storepass "$SPASS" \
+            -keypass "$KPASS" \
+            -dname "CN=FlowPebble, OU=Mobile Engineering, O=FlowPebble, L=Addis Ababa, ST=AA, C=ET"
+          base64 -w 0 keystore-bundle/flowpebble-upload.jks > keystore-bundle/KEYSTORE_BASE64.txt
+          cat > keystore-bundle/README_SECRETS_SETUP.txt <<EOF
+          ==================================================================
+          FLOWPEBBLE UPLOAD KEYSTORE GENERATED SUCCESSFULLY (100% ON CLOUD)
+          ==================================================================
+          Copy the single-line text inside KEYSTORE_BASE64.txt and save it
+          as your GitHub Repository Secret named: KEYSTORE_BASE64
+          Also verify these 3 Secrets match:
+          KEY_ALIAS: $ALIAS
+          KEY_PASSWORD: (your configured secret or default shown in script)
+          STORE_PASSWORD: (your configured secret or default shown in script)
+          Keep a backup of flowpebble-upload.jks in a safe private place!
+          EOF
+ 
+      - name: Upload Generated Keystore Bundle Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: flowpebble-generated-keystore-DO-NOT-SHARE
+          path: keystore-bundle/
+          retention-days: 3
+ 
+  build-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+ 
+      - name: Auto-Unpack ZIP Archives Uploaded from Smartphone Browser
+        shell: bash
+        run: |
+          set -euo pipefail
+          UNPACKED=0
+          if [ ! -f "settings.gradle.kts" ]; then
+            for z in flowpebble-app-complete*.zip *complete*.zip; do
+              if [ -f "$z" ]; then
+                echo "Detected smartphone-uploaded project archive: $z — unpacking automatically..."
+                unzip -q -o "$z" -d /tmp/fp_unpack
+                if [ -d "/tmp/fp_unpack/flowpebble-app" ]; then
+                  cp -rf /tmp/fp_unpack/flowpebble-app/. .
+                else
+                  cp -rf /tmp/fp_unpack/. .
+                fi
+                rm -rf /tmp/fp_unpack
+                UNPACKED=1
+                break
+              fi
+            done
+          fi
+          if [ -f "flowpebble-play-store-graphics.zip" ]; then
+            echo "Detected flowpebble-play-store-graphics.zip — unpacking into play-store-graphics/..."
+            mkdir -p play-store-graphics
+            unzip -q -o "flowpebble-play-store-graphics.zip" -d play-store-graphics
+            UNPACKED=1
+          fi
+          if [ "$UNPACKED" -eq 1 ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add -A
+            if ! git diff --cached --quiet; then
+              git commit -m "chore(ci): auto-unpack project & graphics ZIP archives uploaded from smartphone [skip ci]"
+              git push origin HEAD:main || true
+            fi
+          fi
+      - name: Set up JDK 17 (Temurin) with Gradle Caching
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+ 
+      - name: Set up Android SDK 35
+        uses: android-actions/setup-android@v3
+ 
+      - name: Ensure Gradle Wrapper is Executable & Bootstrapped
+        shell: bash
+        run: |
+          chmod +x gradlew
+          if [ ! -f "gradle/wrapper/gradle-wrapper.jar" ]; then
+            gradle wrapper --gradle-version 8.10.2
+          fi
+      - name: Decode Upload Keystore from GitHub Secrets (or Generate Ephemeral Fallback if Unset)
+        shell: bash
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+        run: |
+          set -euo pipefail
+          if [ -n "$KEYSTORE_BASE64" ]; then
+            echo "Decoding production upload keystore from secrets.KEYSTORE_BASE64..."
+            printf '%s' "$KEYSTORE_BASE64" | tr -d '\r\n ' | base64 --decode > app/release-keystore.jks
+          else
+            echo "WARNING: secrets.KEYSTORE_BASE64 is not set yet. Generating temporary keystore so CI build succeeds..."
+            ALIAS="${KEY_ALIAS:-flowpebble-key}"
+            KPASS="${KEY_PASSWORD:-FlowPebbleTempPass2026!}"
+            SPASS="${STORE_PASSWORD:-FlowPebbleTempPass2026!}"
+            keytool -genkeypair -v \
+              -keystore app/release-keystore.jks \
+              -keyalg RSA -keysize 2048 -validity 10000 \
+              -alias "$ALIAS" \
+              -storepass "$SPASS" \
+              -keypass "$KPASS" \
+              -dname "CN=FlowPebble, OU=Mobile, O=FlowPebble, L=Addis Ababa, ST=AA, C=ET"
+          fi
+      - name: Render High-Resolution Google Play Console Graphics
+        shell: bash
+        run: |
+          python3 -m pip install --upgrade pip pillow
+          python3 scripts/generate_play_graphics.py
+      - name: Run Lint, Unit Tests, Signed Release Bundle (.aab) & Signed APK (.apk)
+        shell: bash
+        env:
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS != '' && secrets.KEY_ALIAS || 'flowpebble-key' }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD != '' && secrets.KEY_PASSWORD || 'FlowPebbleTempPass2026!' }}
+          STORE_PASSWORD: ${{ secrets.STORE_PASSWORD != '' && secrets.STORE_PASSWORD || 'FlowPebbleTempPass2026!' }}
+          ADMOB_BANNER_ID: ${{ secrets.ADMOB_BANNER_ID }}
+          ADMOB_INTERSTITIAL_ID: ${{ secrets.ADMOB_INTERSTITIAL_ID }}
+          ADMOB_REWARDED_ID: ${{ secrets.ADMOB_REWARDED_ID }}
+        run: |
+          ./gradlew lintRelease testReleaseUnitTest bundleRelease assembleRelease --no-daemon --stacktrace
+      - name: Upload Signed Release AAB, Signed APK, R8 Mapping.txt & Play Store Graphics
+        uses: actions/upload-artifact@v4
+        with:
+          name: flowpebble-play-store-release-bundle
+          path: |
+            app/build/outputs/bundle/release/*.aab
+            app/build/outputs/apk/release/*.apk
+            app/build/outputs/mapping/release/mapping.txt
+            play-store-graphics/*.png
+          if-no-files-found: error
+          retention-days: 30
+ 
+      - name: Securely Wipe Keystore from Runner Disk
+        if: always()
+        shell: bash
+        run: |
+          rm -f app/release-keystore.jks
+  deploy-legal-pages:
+    needs: build-release
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+ 
+      - name: Unpack /docs from ZIP if Needed
+        shell: bash
+        run: |
+          if [ ! -d "docs" ]; then
+            for z in flowpebble-app-complete*.zip *complete*.zip; do
+              if [ -f "$z" ]; then
+                unzip -q -o "$z" -d /tmp/fp_docs
+                if [ -d "/tmp/fp_docs/flowpebble-app/docs" ]; then
+                  cp -rf /tmp/fp_docs/flowpebble-app/docs ./docs
+                fi
+                break
+              fi
+            done
+          fi
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+ 
+      - name: Upload /docs Legal & App-Ads.txt Directory
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: 'docs'
+ 
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+        
