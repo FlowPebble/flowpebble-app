@@ -215,17 +215,12 @@ class GuideDetailFragment : Fragment() {
         try {
             val steps = guide.getStepsList()
             val sb = StringBuilder()
-            sb.append(guide.emoji).append(" ").append(guide.title).append("
-")
-            sb.append(guide.summary).append("
-
-")
+            sb.append(guide.emoji).append(" ").append(guide.title).appendLine()
+            sb.append(guide.summary).appendLine().appendLine()
             steps.forEachIndexed { index, step ->
-                sb.append(index + 1).append(". ").append(step).append("
-")
+                sb.append(index + 1).append(". ").append(step).appendLine()
             }
-            sb.append("
-").append(getString(R.string.share_guide_footer))
+            sb.appendLine().append(getString(R.string.share_guide_footer))
 
             val sendIntent = Intent(Intent.ACTION_SEND).apply {
                 type = "text/plain"

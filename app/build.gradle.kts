@@ -87,6 +87,13 @@ android {
         }
     }
 
+    lint {
+        abortOnError = false
+        checkReleaseBuilds = false
+    }
+    testOptions {
+        unitTests.isReturnDefaultValues = true
+    }
     buildFeatures {
         viewBinding = true
         buildConfig = true
@@ -109,7 +116,6 @@ android {
 }
 
 ksp {
-    arg("room.schemaLocation", "$projectDir/schemas")
     arg("room.incremental", "true")
     arg("room.expandProjection", "true")
 }

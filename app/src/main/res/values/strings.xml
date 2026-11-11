@@ -17,8 +17,7 @@
 
     <!-- Today Screen -->
     <string name="hero_kicker">ONE SMALL WIN</string>
-    <string name="hero_headline">Useful knowledge
-travels further.</string>
+    <string name="hero_headline">Useful knowledge\ntravels further.</string>
     <string name="hero_subtext">Save a practical guide. Make your own. Share it when it could help someone.</string>
     <string name="guides_completed_count">%1$d guides completed</string>
     <string name="section_featured_title">A good place to start</string>
@@ -68,10 +67,8 @@ travels further.</string>
     <string name="btn_already_completed">Completed ✓</string>
     <string name="btn_share_guide">Share this guide</string>
     <string name="msg_guide_completed">Guide completed! One more small win.</string>
-    <string name="share_guide_footer">Made with FlowPebble — Small Steps, Shared.
-https://play.google.com/store/apps/details?id=com.flowpebble.microguides</string>
-    <string name="share_app_message">A small practical guide can save someone time. Discover, create, and share offline 3–5 step micro-guides with FlowPebble:
-https://play.google.com/store/apps/details?id=com.flowpebble.microguides</string>
+    <string name="share_guide_footer">Made with FlowPebble — Small Steps, Shared.\nhttps://play.google.com/store/apps/details?id=com.flowpebble.microguides</string>
+    <string name="share_app_message">A small practical guide can save someone time. Discover, create, and share offline 3–5 step micro-guides with FlowPebble:\nhttps://play.google.com/store/apps/details?id=com.flowpebble.microguides</string>
     <string name="chooser_share_title">Share via</string>
 
     <!-- Create Guide Screen -->
