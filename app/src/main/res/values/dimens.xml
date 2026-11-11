@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="screen_horizontal_padding">18dp</dimen>
+    <dimen name="card_corner_radius">22dp</dimen>
+    <dimen name="hero_corner_radius">26dp</dimen>
+    <dimen name="card_padding">18dp</dimen>
+    <dimen name="item_spacing">12dp</dimen>
+    <dimen name="banner_safe_padding">16dp</dimen>
+    <integer name="explore_grid_columns">1</integer>
+</resources>

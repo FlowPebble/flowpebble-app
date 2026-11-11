@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">FlowPebble</string>
+    <string name="app_tagline">FLOWPEBBLE  •  SMALL STEPS, SHARED</string>
+    <string name="app_subtitle_short">Small Steps, Shared — Practical Offline Micro-Guides</string>
+
+    <!-- Navigation Titles -->
+    <string name="nav_today">Today</string>
+    <string name="nav_explore">Explore</string>
+    <string name="nav_saved">Saved</string>
+    <string name="nav_settings">Settings &amp; Privacy</string>
+    <string name="title_today_header">Your next small win</string>
+    <string name="title_explore_header">Explore guides</string>
+    <string name="title_saved_header">Saved guides</string>
+    <string name="title_create_guide">Create a micro-guide</string>
+    <string name="title_guide_detail">Micro-Guide</string>
+
+    <!-- Today Screen -->
+    <string name="hero_kicker">ONE SMALL WIN</string>
+    <string name="hero_headline">Useful knowledge
+travels further.</string>
+    <string name="hero_subtext">Save a practical guide. Make your own. Share it when it could help someone.</string>
+    <string name="guides_completed_count">%1$d guides completed</string>
+    <string name="section_featured_title">A good place to start</string>
+    <string name="section_featured_subtitle">A short guide you can use right now</string>
+    <string name="section_pro_vault_title">Pro Guide Vault &amp; Templates</string>
+    <string name="section_pro_vault_unlocked_subtitle">Unlocked! Enjoy all bonus micro-guides and templates</string>
+    <string name="card_unlock_pro_title">Want the Pro Guide Vault?</string>
+    <string name="card_unlock_pro_body">Choose to watch one short voluntary video ad to unlock 3 bonus deep-focus guides and custom guide templates. 100% optional.</string>
+    <string name="btn_watch_optional_video">Watch optional video</string>
+    <string name="dialog_reward_confirm_title">Unlock Pro Guide Vault?</string>
+    <string name="dialog_reward_confirm_body">Would you like to watch a short video advertisement to permanently unlock all 3 Pro Vault micro-guides and custom templates on this device?</string>
+    <string name="dialog_reward_confirm_positive">Watch Video</string>
+    <string name="dialog_reward_confirm_negative">Not Now</string>
+    <string name="msg_reward_unlocked">Pro Guide Vault unlocked! Check out your bonus guides.</string>
+    <string name="msg_reward_not_ready">The optional video is still loading or you are offline. Please try again shortly.</string>
+    <string name="section_share_title">Made to be shared</string>
+    <string name="section_share_subtitle">Each guide is a tiny piece of reusable know-how</string>
+    <string name="card_share_app_title">Send a useful guide to a friend</string>
+    <string name="card_share_app_subtitle">Share practical steps, not a sales message.</string>
+
+    <!-- Explore Screen -->
+    <string name="search_hint">Search practical guides…</string>
+    <string name="category_all">All</string>
+    <string name="category_everyday">Everyday</string>
+    <string name="category_phone_tech">Phone &amp; tech</string>
+    <string name="category_study_work">Study &amp; work</string>
+    <string name="category_travel">Travel</string>
+    <string name="category_create_share">Create &amp; share</string>
+    <string name="category_wellness">Wellness &amp; focus</string>
+    <string name="empty_explore_message">No guides match that filter yet. Tap + Create a guide to build your own.</string>
+
+    <!-- Saved Screen -->
+    <string name="empty_saved_title">No saved guides yet</string>
+    <string name="empty_saved_subtitle">Your bookmarked micro-guides will appear here for instant offline access. Tap the bookmark icon on any guide to save it.</string>
+    <string name="msg_guide_unsaved">Removed from Saved guides</string>
+    <string name="action_undo">Undo</string>
+
+    <!-- Guide Detail & Timer -->
+    <string name="guide_meta_format">%1$s  •  %2$d steps</string>
+    <string name="step_progress_format">%1$d of %2$d steps checked</string>
+    <string name="timer_card_title">Built-in Focus Timer</string>
+    <string name="timer_start">Start Timer</string>
+    <string name="timer_pause">Pause</string>
+    <string name="timer_reset">Reset</string>
+    <string name="timer_finished_msg">Focus timer complete! Great job staying on track.</string>
+    <string name="btn_mark_completed">Mark as completed</string>
+    <string name="btn_already_completed">Completed ✓</string>
+    <string name="btn_share_guide">Share this guide</string>
+    <string name="msg_guide_completed">Guide completed! One more small win.</string>
+    <string name="share_guide_footer">Made with FlowPebble — Small Steps, Shared.
+https://play.google.com/store/apps/details?id=com.flowpebble.microguides</string>
+    <string name="share_app_message">A small practical guide can save someone time. Discover, create, and share offline 3–5 step micro-guides with FlowPebble:
+https://play.google.com/store/apps/details?id=com.flowpebble.microguides</string>
+    <string name="chooser_share_title">Share via</string>
+
+    <!-- Create Guide Screen -->
+    <string name="fab_create_guide">Create a guide</string>
+    <string name="create_header_subtitle">Capture practical know-how in 3 to 5 clear, repeatable actions.</string>
+    <string name="label_guide_title">Guide title (4–60 chars)</string>
+    <string name="hint_guide_title">Example: Prepare a distraction-free study desk</string>
+    <string name="label_guide_summary">Short summary</string>
+    <string name="hint_guide_summary">One sentence explaining what this guide helps solve</string>
+    <string name="label_guide_category">Category</string>
+    <string name="label_guide_badge">Select icon badge</string>
+    <string name="label_step_1">Step 1 (Required)</string>
+    <string name="label_step_2">Step 2 (Required)</string>
+    <string name="label_step_3">Step 3 (Required)</string>
+    <string name="label_step_4">Step 4 (Optional)</string>
+    <string name="label_step_5">Step 5 (Optional)</string>
+    <string name="btn_template_fill">Insert Pro Quick-Template</string>
+    <string name="btn_save_guide">Save Micro-Guide</string>
+    <string name="err_title_length">Please enter a title between 4 and 60 characters.</string>
+    <string name="err_steps_count">Please provide at least 3 non-empty steps (up to 5).</string>
+    <string name="msg_guide_created">Your custom micro-guide has been saved offline!</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_skip">Skip</string>
+    <string name="onboarding_next">Next</string>
+    <string name="onboarding_get_started">Get Started</string>
+    <string name="onboarding_title_1">Small Steps, Big Clarity</string>
+    <string name="onboarding_body_1">Break everyday tasks, digital organization, and deep focus routines into crisp 3-to-5 step micro-guides.</string>
+    <string name="onboarding_title_2">100% Offline-First by Design</string>
+    <string name="onboarding_body_2">Every starter guide, custom guide, bookmark, and focus timer lives locally on your phone—no account or cloud required.</string>
+    <string name="onboarding_title_3">Create &amp; Share Practical Know-How</string>
+    <string name="onboarding_body_3">Build your own micro-guides in seconds and share clean, step-by-step checklists with friends or colleagues.</string>
+
+    <!-- Settings, About, FAQ & Legal -->
+    <string name="settings_offline_banner">FlowPebble is 100% offline-first. Guides you create, save, and complete are stored locally in your device database. Advertising requests are managed via Google AdMob and UMP consent preferences.</string>
+    <string name="settings_section_preferences">Appearance &amp; Experience</string>
+    <string name="settings_theme_label">App Theme</string>
+    <string name="theme_system">System Default</string>
+    <string name="theme_dark">Emerald Dark</string>
+    <string name="theme_light">Alabaster Light</string>
+    <string name="settings_haptics_title">Tactile Haptic Feedback</string>
+    <string name="settings_haptics_subtitle">Subtle vibration on step completion and bookmarks</string>
+    <string name="settings_section_privacy_legal">Privacy, Legal &amp; Feedback</string>
+    <string name="settings_privacy_options_title">Advertising Privacy Choices (GDPR / US States)</string>
+    <string name="settings_privacy_options_subtitle">Review or update your Google UMP consent preferences</string>
+    <string name="settings_privacy_policy_title">Privacy Policy</string>
+    <string name="settings_privacy_policy_subtitle">Read our full data &amp; offline storage policy</string>
+    <string name="settings_terms_title">Terms of Service</string>
+    <string name="settings_terms_subtitle">Read acceptable use and service terms</string>
+    <string name="settings_rate_app_title">Rate FlowPebble</string>
+    <string name="settings_rate_app_subtitle">Enjoying FlowPebble? Leave a quick Play Store review</string>
+    <string name="settings_share_app_title">Share FlowPebble with Friends</string>
+    <string name="settings_share_app_subtitle">Send the Play Store link to someone who loves practical tips</string>
+
+    <!-- FAQ Section -->
+    <string name="settings_section_faq">Frequently Asked Questions</string>
+    <string name="faq_q1">Does FlowPebble require an internet connection or login?</string>
+    <string name="faq_a1">No. FlowPebble works 100% offline using a local Room SQLite database on your device. You never need to create an account or sign in.</string>
+    <string name="faq_q2">How do I create or delete my own micro-guide?</string>
+    <string name="faq_a2">Tap the + Create a guide button on the main screen, enter a title and 3 to 5 steps, and tap Save. You can bookmark or remove custom guides anytime.</string>
+    <string name="faq_q3">How does the Pro Guide Vault work?</string>
+    <string name="faq_a3">Watching a single voluntary Rewarded Video Ad on the Today tab permanently unlocks 3 bonus micro-guides and quick-fill templates on your device.</string>
+    <string name="faq_q4">How is my privacy protected?</string>
+    <string name="faq_a4">Your personal guides never leave your device unless you explicitly tap Share. For ads, we use Google UMP so you can control consent at any time.</string>
+
+    <!-- Developer About & Social Contact -->
+    <string name="settings_section_about">About Developer &amp; Community</string>
+    <string name="about_developer_card_title">Built by FlowPebble Studio</string>
+    <string name="about_developer_card_body">Crafted with 100% Native Kotlin &amp; Material Design 3 for fast, distraction-free personal productivity. Connect with us on our official channels:</string>
+    <string name="social_youtube">YouTube (@thenewage2030)</string>
+    <string name="social_facebook">Facebook Official Page</string>
+    <string name="social_telegram">Telegram (@DigitalEthiopia251)</string>
+    <string name="social_tiktok">TikTok (@thenewage5)</string>
+    <string name="social_email">Email Support (digitalizationethiopian@gmail.com)</string>
+    <string name="version_footer">FlowPebble v1.0.0 (API 35 Native Kotlin) • Offline-First</string>
+
+    <!-- Connectivity & Error Modals -->
+    <string name="snackbar_offline_mode">Offline Mode Active — All guides available locally</string>
+    <string name="snackbar_back_online">Back Online</string>
+    <string name="snackbar_update_ready">A new update is downloaded and ready to install.</string>
+    <string name="action_restart">Restart</string>
+    <string name="err_external_link_title">Unable to Open Link</string>
+    <string name="err_external_link_body">No compatible application was found on your device to open this link: %1$s</string>
+    <string name="btn_ok">OK</string>
+
+    <!-- URLs -->
+    <string name="url_play_store" translatable="false">https://play.google.com/store/apps/details?id=com.flowpebble.microguides</string>
+    <string name="url_privacy_policy" translatable="false">https://flowpebble.github.io/flowpebble-app/privacy-policy.html</string>
+    <string name="url_terms_of_service" translatable="false">https://flowpebble.github.io/flowpebble-app/terms-of-service.html</string>
+    <string name="url_youtube" translatable="false">https://www.youtube.com/@thenewage2030</string>
+    <string name="url_facebook" translatable="false">https://www.facebook.com/profile.php?id=61592500151432</string>
+    <string name="url_telegram" translatable="false">https://t.me/DigitalEthiopia251</string>
+    <string name="url_tiktok" translatable="false">https://www.tiktok.com/@thenewage5?_r=1&amp;_t=ZS-9BIlhkamf92</string>
+    <string name="url_support_email" translatable="false">mailto:digitalizationethiopian@gmail.com?subject=FlowPebble%20Feedback</string>
+</resources>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/todayFragment">
+
+    <fragment
+        android:id="@+id/todayFragment"
+        android:name="com.flowpebble.microguides.ui.fragments.TodayFragment"
+        android:label="@string/title_today_header" />
+
+    <fragment
+        android:id="@+id/exploreFragment"
+        android:name="com.flowpebble.microguides.ui.fragments.ExploreFragment"
+        android:label="@string/title_explore_header" />
+
+    <fragment
+        android:id="@+id/savedFragment"
+        android:name="com.flowpebble.microguides.ui.fragments.SavedFragment"
+        android:label="@string/title_saved_header" />
+
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.flowpebble.microguides.ui.fragments.SettingsFragment"
+        android:label="@string/nav_settings" />
+
+    <fragment
+        android:id="@+id/guideDetailFragment"
+        android:name="com.flowpebble.microguides.ui.fragments.GuideDetailFragment"
+        android:label="@string/title_guide_detail">
+        <argument
+            android:name="guideId"
+            app:argType="string" />
+    </fragment>
+
+    <dialog
+        android:id="@+id/createGuideDialogFragment"
+        android:name="com.flowpebble.microguides.ui.fragments.CreateGuideDialogFragment"
+        android:label="@string/title_create_guide" />
+</navigation>

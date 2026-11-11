@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Signature Emerald / Pebble Dark Palette -->
+    <color name="dark_bg">#101B1A</color>
+    <color name="dark_surface">#182624</color>
+    <color name="dark_surface_elevated">#1F332F</color>
+    <color name="forest_gradient_start">#244A40</color>
+    <color name="mint_accent">#79E0B2</color>
+    <color name="mint_highlight">#A5F2CD</color>
+    <color name="sky_secondary">#9BC8F5</color>
+    <color name="sage_muted">#9BAEAA</color>
+    <color name="text_on_dark">#F2FBF7</color>
+    <color name="text_on_mint">#0D211B</color>
+
+    <!-- Crisp Alabaster Mint Light Mode Palette -->
+    <color name="light_bg">#F4FBF7</color>
+    <color name="light_surface">#FFFFFF</color>
+    <color name="light_surface_elevated">#E3F2EA</color>
+    <color name="emerald_primary">#14533C</color>
+    <color name="emerald_secondary">#1E6F52</color>
+    <color name="charcoal_ink">#111F1C</color>
+    <color name="charcoal_muted">#49635D</color>
+
+    <color name="divider_subtle">#2A403B</color>
+    <color name="error_red">#FF6B6B</color>
+</resources>

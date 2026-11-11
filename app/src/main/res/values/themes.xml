@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.FlowPebble" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/emerald_primary</item>
+        <item name="colorOnPrimary">@color/light_surface</item>
+        <item name="colorPrimaryContainer">@color/light_surface_elevated</item>
+        <item name="colorOnPrimaryContainer">@color/charcoal_ink</item>
+        <item name="colorSecondary">@color/emerald_secondary</item>
+        <item name="colorOnSecondary">@color/light_surface</item>
+        <item name="android:colorBackground">@color/light_bg</item>
+        <item name="android:windowBackground">@color/light_bg</item>
+        <item name="colorSurface">@color/light_surface</item>
+        <item name="colorOnSurface">@color/charcoal_ink</item>
+        <item name="colorSurfaceVariant">@color/light_surface_elevated</item>
+        <item name="colorOnSurfaceVariant">@color/charcoal_muted</item>
+        <item name="android:statusBarColor">@color/light_bg</item>
+        <item name="android:navigationBarColor">@color/light_surface</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <style name="Theme.FlowPebble.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/dark_bg</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
+        <item name="windowSplashScreenAnimationDuration">600</item>
+        <item name="postSplashScreenTheme">@style/Theme.FlowPebble</item>
+    </style>
+</resources>

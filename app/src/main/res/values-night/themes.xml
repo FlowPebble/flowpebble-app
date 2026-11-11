@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.FlowPebble" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/mint_accent</item>
+        <item name="colorOnPrimary">@color/text_on_mint</item>
+        <item name="colorPrimaryContainer">@color/forest_gradient_start</item>
+        <item name="colorOnPrimaryContainer">@color/mint_highlight</item>
+        <item name="colorSecondary">@color/sky_secondary</item>
+        <item name="colorOnSecondary">@color/text_on_mint</item>
+        <item name="android:windowBackground">@color/dark_bg</item>
+        <item name="colorSurface">@color/dark_surface</item>
+        <item name="colorOnSurface">@color/text_on_dark</item>
+        <item name="colorSurfaceVariant">@color/dark_surface_elevated</item>
+        <item name="colorOnSurfaceVariant">@color/sage_muted</item>
+        <item name="android:statusBarColor">@color/dark_bg</item>
+        <item name="android:navigationBarColor">@color/dark_surface</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+</resources>
