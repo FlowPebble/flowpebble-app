@@ -146,6 +146,8 @@ jobs:
                   "com.google.android.gms.ads.flag.OPTIMIZE_INITIALIZATION"
               )
               mtxt = re.sub(r'<meta-data\s+android:name="preloaded_fonts"[^>]*/>', '', mtxt)
+              # ይህ መስመር የ SmallestScreenSize ስህተትን በራሱ ያስተካክላል
+              mtxt = mtxt.replace("SmallestScreenSize", "smallestScreenSize")
               manifest.write_text(mtxt, encoding="utf-8")
 
           themes = Path("app/src/main/res/values/themes.xml")
