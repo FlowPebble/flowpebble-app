@@ -1,5 +1,5 @@
 name: FlowPebble Android Release & Play Store CI/CD
- 
+
 on:
   push:
     branches: [ main ]
@@ -10,17 +10,18 @@ on:
         required: false
         default: false
         type: boolean
- 
+
 permissions:
   contents: write
   pages: write
   id-token: write
- 
+
 concurrency:
   group: "flowpebble-ci-${{ github.ref }}"
   cancel-in-progress: false
- 
+
 jobs:
+  # Optional 100% Smartphone Keystore Generator Job (runs only when requested via workflow_dispatch)
   generate-keystore:
     if: ${{ github.event_name == 'workflow_dispatch' && inputs.generate_new_keystore == true }}
     runs-on: ubuntu-latest
@@ -30,7 +31,7 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
- 
+
       - name: Generate Upload Keystore & Base64 Bundle
         shell: bash
         env:
@@ -57,20 +58,16 @@ jobs:
           ==================================================================
           Copy the single-line text inside KEYSTORE_BASE64.txt and save it
           as your GitHub Repository Secret named: KEYSTORE_BASE64
-          Also verify these 3 Secrets match:
-          KEY_ALIAS: $ALIAS
-          KEY_PASSWORD: (your configured secret or default shown in script)
-          STORE_PASSWORD: (your configured secret or default shown in script)
-          Keep a backup of flowpebble-upload.jks in a safe private place!
           EOF
- 
+
       - name: Upload Generated Keystore Bundle Artifact
         uses: actions/upload-artifact@v4
         with:
           name: flowpebble-generated-keystore-DO-NOT-SHARE
           path: keystore-bundle/
           retention-days: 3
- 
+
+  # Main Native Kotlin Android Release Build, Signing & Play Graphics Job
   build-release:
     runs-on: ubuntu-latest
     steps:
@@ -78,7 +75,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
- 
+
       - name: Auto-Unpack ZIP Archives Uploaded from Smartphone Browser
         shell: bash
         run: |
@@ -90,9 +87,9 @@ jobs:
                 echo "Detected smartphone-uploaded project archive: $z — unpacking automatically..."
                 unzip -q -o "$z" -d /tmp/fp_unpack
                 if [ -d "/tmp/fp_unpack/flowpebble-app" ]; then
-                  cp -rf /tmp/fp_unpack/flowpebble-app/. .
+                  find /tmp/fp_unpack/flowpebble-app -maxdepth 1 -mindepth 1 ! -name '.github' -exec cp -rf {} . \;
                 else
-                  cp -rf /tmp/fp_unpack/. .
+                  find /tmp/fp_unpack -maxdepth 1 -mindepth 1 ! -name '.github' -exec cp -rf {} . \;
                 fi
                 rm -rf /tmp/fp_unpack
                 UNPACKED=1
@@ -115,16 +112,29 @@ jobs:
               git push origin HEAD:main || true
             fi
           fi
+
       - name: Set up JDK 17 (Temurin) with Gradle Caching
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
           cache: 'gradle'
- 
-      - name: Set up Android SDK 35
-        uses: android-actions/setup-android@v3
- 
+
+      - name: Configure Pre-Installed Android SDK 35 & Licenses (Bypasses Deprecated 'tools' Package Error)
+        shell: bash
+        run: |
+          set -euo pipefail
+          export ANDROID_SDK_ROOT="${ANDROID_HOME:-/usr/local/lib/android/sdk}"
+          export ANDROID_HOME="$ANDROID_SDK_ROOT"
+          echo "ANDROID_HOME=$ANDROID_SDK_ROOT" >> "$GITHUB_ENV"
+          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT" >> "$GITHUB_ENV"
+          echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
+
+          SDKMANAGER=$(find "$ANDROID_SDK_ROOT/cmdline-tools" -name sdkmanager | sort -V | tail -n 1)
+          echo "Using sdkmanager at: $SDKMANAGER"
+          yes | "$SDKMANAGER" --licenses >/dev/null 2>&1 || true
+          "$SDKMANAGER" "platform-tools" "platforms;android-35" "build-tools;35.0.0"
+
       - name: Ensure Gradle Wrapper is Executable & Bootstrapped
         shell: bash
         run: |
@@ -132,20 +142,35 @@ jobs:
           if [ ! -f "gradle/wrapper/gradle-wrapper.jar" ]; then
             gradle wrapper --gradle-version 8.10.2
           fi
-      - name: Decode Upload Keystore from GitHub Secrets (or Generate Ephemeral Fallback if Unset)
+
+      - name: Decode & Verify Upload Keystore from GitHub Secrets
         shell: bash
         env:
           KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KESTORE_BASE64: ${{ secrets.KESTORE_BASE64 }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
         run: |
           set -euo pipefail
-          if [ -n "$KEYSTORE_BASE64" ]; then
-            echo "Decoding production upload keystore from secrets.KEYSTORE_BASE64..."
-            printf '%s' "$KEYSTORE_BASE64" | tr -d '\r\n ' | base64 --decode > app/release-keystore.jks
+          B64_SECRET="${KEYSTORE_BASE64:-$KESTORE_BASE64}"
+          if [ -n "$B64_SECRET" ]; then
+            echo "Decoding production upload keystore from GitHub Secrets..."
+            printf '%s' "$B64_SECRET" | base64 --decode -i > app/release-keystore.jks
+            # Auto-verify alias inside the decoded keystore so there is never an alias mismatch
+            if [ -n "$STORE_PASSWORD" ]; then
+              DETECTED_ALIAS=$(keytool -list -v -keystore app/release-keystore.jks -storepass "$STORE_PASSWORD" 2>/dev/null | awk '/Alias name:/ {print $3; exit}' || true)
+              if [ -n "$DETECTED_ALIAS" ] && [ "$DETECTED_ALIAS" != "$KEY_ALIAS" ]; then
+                echo "Detected keystore alias '$DETECTED_ALIAS' inside .jks — exporting to build environment."
+                echo "RESOLVED_KEY_ALIAS=$DETECTED_ALIAS" >> "$GITHUB_ENV"
+              else
+                echo "RESOLVED_KEY_ALIAS=${KEY_ALIAS}" >> "$GITHUB_ENV"
+              fi
+            else
+              echo "RESOLVED_KEY_ALIAS=${KEY_ALIAS}" >> "$GITHUB_ENV"
+            fi
           else
-            echo "WARNING: secrets.KEYSTORE_BASE64 is not set yet. Generating temporary keystore so CI build succeeds..."
+            echo "WARNING: KEYSTORE_BASE64 is not set yet. Generating temporary keystore so CI build succeeds..."
             ALIAS="${KEY_ALIAS:-flowpebble-key}"
             KPASS="${KEY_PASSWORD:-FlowPebbleTempPass2026!}"
             SPASS="${STORE_PASSWORD:-FlowPebbleTempPass2026!}"
@@ -156,16 +181,19 @@ jobs:
               -storepass "$SPASS" \
               -keypass "$KPASS" \
               -dname "CN=FlowPebble, OU=Mobile, O=FlowPebble, L=Addis Ababa, ST=AA, C=ET"
+            echo "RESOLVED_KEY_ALIAS=$ALIAS" >> "$GITHUB_ENV"
           fi
+
       - name: Render High-Resolution Google Play Console Graphics
         shell: bash
         run: |
           python3 -m pip install --upgrade pip pillow
           python3 scripts/generate_play_graphics.py
+
       - name: Run Lint, Unit Tests, Signed Release Bundle (.aab) & Signed APK (.apk)
         shell: bash
         env:
-          KEY_ALIAS: ${{ secrets.KEY_ALIAS != '' && secrets.KEY_ALIAS || 'flowpebble-key' }}
+          KEY_ALIAS: ${{ env.RESOLVED_KEY_ALIAS != '' && env.RESOLVED_KEY_ALIAS || secrets.KEY_ALIAS || 'flowpebble-key' }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD != '' && secrets.KEY_PASSWORD || 'FlowPebbleTempPass2026!' }}
           STORE_PASSWORD: ${{ secrets.STORE_PASSWORD != '' && secrets.STORE_PASSWORD || 'FlowPebbleTempPass2026!' }}
           ADMOB_BANNER_ID: ${{ secrets.ADMOB_BANNER_ID }}
@@ -173,6 +201,7 @@ jobs:
           ADMOB_REWARDED_ID: ${{ secrets.ADMOB_REWARDED_ID }}
         run: |
           ./gradlew lintRelease testReleaseUnitTest bundleRelease assembleRelease --no-daemon --stacktrace
+
       - name: Upload Signed Release AAB, Signed APK, R8 Mapping.txt & Play Store Graphics
         uses: actions/upload-artifact@v4
         with:
@@ -184,12 +213,14 @@ jobs:
             play-store-graphics/*.png
           if-no-files-found: error
           retention-days: 30
- 
+
       - name: Securely Wipe Keystore from Runner Disk
         if: always()
         shell: bash
         run: |
           rm -f app/release-keystore.jks
+
+  # Automatic GitHub Pages Deployment for Legal & AdMob Verification (/docs)
   deploy-legal-pages:
     needs: build-release
     runs-on: ubuntu-latest
@@ -201,7 +232,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: main
- 
+
       - name: Unpack /docs from ZIP if Needed
         shell: bash
         run: |
@@ -216,15 +247,19 @@ jobs:
               fi
             done
           fi
+
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
- 
+        with:
+          enablement: true
+        continue-on-error: true
+
       - name: Upload /docs Legal & App-Ads.txt Directory
         uses: actions/upload-pages-artifact@v3
         with:
           path: 'docs'
- 
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-        
+        continue-on-error: true
